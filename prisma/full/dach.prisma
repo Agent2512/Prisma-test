@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../libs/dach"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE3_URL")
+}
+
+model accesspanel {
+  id              Int              @id @default(autoincrement())
+  panel           String           @unique(map: "AccessPanel_panel_key")
+  url             String
+  typeId          Int?
+  accesspaneltype accesspaneltype? @relation(fields: [typeId], references: [id], map: "AccessPanel_typeId_fkey")
+  user            user[]           @relation("accesspaneltouser")
+
+  @@index([typeId], map: "AccessPanel_typeId_fkey")
+}
+
+model accesspaneltype {
+  id          Int           @id @default(autoincrement())
+  type        String        @unique(map: "AccessPanelType_type_key")
+  color       String
+  accesspanel accesspanel[]
+}
+
+model account {
+  id                String  @id
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              user    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Account_userId_fkey")
+
+  @@unique([provider, providerAccountId], map: "Account_provider_providerAccountId_key")
+  @@index([userId], map: "Account_userId_fkey")
+}
+
+model feed {
+  id              Int          @id @default(autoincrement())
+  siteId          Int
+  webShop         String
+  feedName        String
+  durationProduct Int          @default(5)
+  durationPrice   Int          @default(5)
+  feedupdate      feedupdate[]
+
+  @@unique([siteId, webShop], map: "Feed_siteId_webShop_key")
+}
+
+model feedupdate {
+  id         Int       @id @default(autoincrement())
+  feedId     Int
+  duration   Int
+  updateDate DateTime  @default(now())
+  type       String
+  updateDone DateTime?
+  feed       feed      @relation(fields: [feedId], references: [id], onDelete: Cascade, map: "FeedUpdate_feedId_fkey")
+
+  @@index([feedId], map: "FeedUpdate_feedId_fkey")
+}
+
+model satisfactionstate {
+  SatisfactionId Int     @id
+  state          String  @default("FOLLOW")
+  userEmail      String?
+  user           user?   @relation(fields: [userEmail], references: [email], map: "SatisfactionState_userEmail_fkey")
+
+  @@index([userEmail], map: "SatisfactionState_userEmail_fkey")
+}
+
+model user {
+  id                String              @id
+  name              String?
+  email             String?             @unique(map: "User_email_key")
+  image             String?
+  password          String?
+  account           account[]
+  satisfactionstate satisfactionstate[]
+  accesspanel       accesspanel[]       @relation("accesspaneltouser")
+}
