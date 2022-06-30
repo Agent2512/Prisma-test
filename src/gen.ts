@@ -1,8 +1,9 @@
 import { A, F } from "@mobily/ts-belt";
 import { execSync } from "child_process";
-import { readdirSync, writeFileSync } from "fs";
+import { appendFileSync, readdirSync, writeFileSync } from "fs";
 import { cwd } from "process";
-import { makeExports, makeGlobals, makeImports } from "./makePrismaConnect";
+import { makeGenerator } from "./utils/makeGenerator";
+import { makePrismaConnect } from "./utils/makePrismaConnect";
 
 export const gen = () => {
     console.log("generating...");
@@ -13,10 +14,13 @@ export const gen = () => {
     A.forEach(fullSchemas, file => {
         console.log(`generating: schema->${file}`);
 
+        const dist = pathToPrisma + "full/" + file
+        appendFileSync(dist, makeGenerator(file.replace(".prisma", "")))
+
         execSync(`npx prisma generate --schema=./prisma/full/${file}`)
     })
 
     console.log("generating: prismaConnect");
     const dbs = F.toMutable(A.map(fullSchemas, file => file.replace(".prisma", "")));
-    writeFileSync(pathToPrisma+"prismaConnect.ts", `${makeImports(dbs)}\n${makeGlobals(dbs)}\n${makeExports(dbs)}`)
+    writeFileSync(pathToPrisma+"prismaConnect.ts", makePrismaConnect(dbs))
 }

@@ -4,3 +4,6 @@ node_modules
 dist/
 package-lock.json
 prisma/libs/
+prisma/full/
+prisma/modules/
+prisma/prismaConnect.ts
