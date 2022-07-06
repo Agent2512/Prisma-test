@@ -4,12 +4,14 @@ import { cwd } from "process";
 import { getEnumName } from "./getEnumName";
 import { getAllEnumsSets } from "./getAllEnumsSets";
 
+export type Enum = { name: string, enumStr: string }
+export type AllEnumNames = { [key: string]: Enum[]; };
+
 export const makeAllEnums = () => {
     const pathToPrisma = cwd() + "/prisma/";
     const fullSchemas = readdirSync(pathToPrisma + "full");
 
-    type Enum = {name: string, enumStr: string}
-    type AllEnumNames = { [key: string]: Enum[]; };
+
 
     let allEnums: AllEnumNames = {};
 
@@ -27,7 +29,7 @@ export const makeAllEnums = () => {
                 const enumStr = fileStr.slice(mPos.start, mPos.end);
                 const enumName = getEnumName(enumStr);
 
-                const e: Enum = {name: enumName, enumStr}
+                const e: Enum = { name: enumName, enumStr }
                 allEnums[fileName2] == undefined ? allEnums[fileName2] = [e] : allEnums[fileName2]?.push(e);
 
                 appendFileSync(`${pathToPrisma}modules/${fileName2}/enum.prisma`, `${enumStr}\n`);

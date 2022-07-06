@@ -4,12 +4,14 @@ import { cwd } from "process";
 import { getAllModelSets } from "./getAllModelSets";
 import { getModelName } from "./getModelName";
 
+export type Model = { name: string; modelStr: string; };
+export type AllModels = { [db: string]: Model[]; };
+
 export const makeAllModules = () => {
     const pathToPrisma = cwd() + "/prisma/";
     const fullSchemas = readdirSync(pathToPrisma + "full");
 
-    type Model = { name: string; modelStr: string; };
-    type AllModels = { [db: string]: Model[]; };
+
 
     let allModels: AllModels = {};
 
