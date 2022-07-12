@@ -5,7 +5,6 @@ import { init } from './init';
 import { pull } from './pull';
 import { split } from './split';
 
-
 const args = getArgs()
 init()
 
@@ -25,5 +24,6 @@ else if (A.find(args, a => a.value == "gen")) {
 else if (A.find(args, a => a.value == "split")) {
     split()
 }
+
 
 

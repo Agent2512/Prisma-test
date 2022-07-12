@@ -1,7 +1,7 @@
 import { A, D } from "@mobily/ts-belt"
-import { readdirSync, existsSync, mkdirSync } from "fs"
+import { readdirSync, existsSync, mkdirSync, readFileSync, appendFileSync, writeFileSync } from "fs"
 import { cwd } from "process"
-import { DbRelations, findAllRelations } from "./utils/split/findAllRelations"
+import {  DbRelations, findAllRelations } from "./utils/split/findAllRelations"
 import { fixModelEnums } from "./utils/split/fixModelEnums"
 import { makeAllEnums } from "./utils/split/makeAllEnums"
 import { makeAllModules } from "./utils/split/makeAllModules"
@@ -28,16 +28,21 @@ export const split = () => {
     fixModelEnums(allModels, allEnums)
 
     const allRelations = findAllRelations(allModels)
-
+    fixAllRelations(allRelations)
 
 }
 
 const fixAllRelations = (dbRelations: DbRelations) => {
-    const dbKeys = D.keys(dbRelations)
+    const pathToPrisma = cwd() + "/prisma/"
 
-    A.forEach(dbKeys, dbKey => {
-        const db = dbRelations[dbKey]
-        if (!db) return;           
+    A.forEach(D.keys(dbRelations), dbKey => {
+        const models = dbRelations[dbKey]
+        if (!models) return;
+        const keys = D.keys(models)
+        
 
+        for (const key of keys) {
+            
+        }
     })
 }
